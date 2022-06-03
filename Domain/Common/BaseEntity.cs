@@ -1,12 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿#region
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+#endregion
 
 namespace Domain.Common;
 
 public class BaseEntity
 {
-    public long Id { get; set; } = default!;
-    
     private readonly List<BaseEvent> _domainEvents = new();
+    public long Id { get; set; } = default!;
 
     [NotMapped] public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
 

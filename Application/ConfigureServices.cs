@@ -1,6 +1,11 @@
-﻿using System.Reflection;
+﻿#region
+
+using System.Reflection;
 using MediatR;
 
+#endregion
+
+// ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices

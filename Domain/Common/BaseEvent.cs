@@ -1,4 +1,8 @@
-﻿using MediatR;
+﻿#region
+
+using MediatR;
+
+#endregion
 
 namespace Domain.Common;
 
