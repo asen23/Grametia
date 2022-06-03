@@ -14,6 +14,7 @@ public record CreateUserCommand : IRequest<long>
     public string Address { get; init; } = default!;
     public string PhoneNumber { get; init; } = default!;
     public string Email { get; init; } = default!;
+    public string Password { get; init; } = default!;
 }
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
@@ -32,30 +33,12 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
             Username = request.Username,
             Address = request.Address,
             Email = request.Email,
+            Password = request.Password,
             PhoneNumber = request.PhoneNumber,
-            Role = "member"
+            Role = "member",
         };
 
-        entity.Cart = new Cart();
-
-        _context.Users.Add(entity);
-        entity.Cart.Items.Add(new CartItem
-        {
-            Amount = 1,
-            Book = new Book
-            {
-                Title = "tes",
-                Edition = "tes",
-                Description = "tes",
-                Author = "tes",
-                Publisher = "tes",
-                ISBN = "tes",
-                Category = "tes",
-                ReleaseDate = "tes",
-                Price = 1,
-                Stock = 1
-            }
-        });
+        await _context.Users.AddAsync(entity, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 

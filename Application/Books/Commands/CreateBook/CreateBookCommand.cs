@@ -44,10 +44,10 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, long>
             Category = request.Category,
             ReleaseDate = request.ReleaseDate,
             Price = request.Price,
-            Stock = request.Stock
+            Stock = request.Stock,
         };
 
-        _context.Books.Add(entity);
+        await _context.Books.AddAsync(entity, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 

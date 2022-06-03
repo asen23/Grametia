@@ -22,8 +22,7 @@ public class DeleteBookCommandHandler : AsyncRequestHandler<DeleteBookCommand>
     protected override async Task Handle(DeleteBookCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Books
-            .Where(l => l.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
+            .FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
             // throw new NotFoundException(nameof(Book), request.Id);

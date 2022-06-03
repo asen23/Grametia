@@ -22,8 +22,7 @@ public class DeleteUserCommandHandler : AsyncRequestHandler<DeleteUserCommand>
     protected override async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Users
-            .Where(l => l.Id == request.Id)
-            .SingleOrDefaultAsync(cancellationToken);
+            .FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
             // throw new NotFoundException(nameof(User), request.Id);
