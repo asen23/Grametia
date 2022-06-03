@@ -1,7 +1,7 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 
-# Created by https://www.toptal.com/developers/gitignore/api/windows,csharp,dotnetcore,rider,visualstudio
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,csharp,dotnetcore,rider,visualstudio
+# Created by https://www.toptal.com/developers/gitignore/api/windows,visualstudio,rider,dotnetcore,csharp,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,visualstudio,rider,dotnetcore,csharp,visualstudiocode
 
 ### Csharp ###
 ## Ignore Visual Studio temporary files, build results, and
@@ -489,6 +489,24 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
+### VisualStudioCode ###
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# Support for Project snippet scope
+.vscode/*.code-snippets
+
+# Ignore code-workspaces
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
@@ -691,7 +709,7 @@ $RECYCLE.BIN/
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,csharp,dotnetcore,rider,visualstudio
+# End of https://www.toptal.com/developers/gitignore/api/windows,visualstudio,rider,dotnetcore,csharp,visualstudiocode
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
