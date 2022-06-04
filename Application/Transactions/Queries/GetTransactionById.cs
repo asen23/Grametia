@@ -9,21 +9,21 @@ using MediatR;
 
 namespace Application.Transactions.Queries;
 
-public record GetTransactionsById : IRequest<ValidateableResponse<Transaction>>
+public record GetTransactionById : IRequest<ValidateableResponse<Transaction>>
 {
     public long Id { get; set; } = default!;
 }
 
-public class GetTransactionsByIdQueryHandler : IRequestHandler<GetTransactionsById, ValidateableResponse<Transaction>>
+public class GetTransactionByIdQueryHandler : IRequestHandler<GetTransactionById, ValidateableResponse<Transaction>>
 {
     private readonly IApplicationDbContext _context;
 
-    public GetTransactionsByIdQueryHandler(IApplicationDbContext context)
+    public GetTransactionByIdQueryHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<ValidateableResponse<Transaction>> Handle(GetTransactionsById request,
+    public async Task<ValidateableResponse<Transaction>> Handle(GetTransactionById request,
         CancellationToken cancellationToken)
     {
         var transaction = await _context.Transactions
