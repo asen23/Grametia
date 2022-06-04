@@ -1,14 +1,16 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 #endregion
 
 namespace Application.Users.Commands.CreateUser;
 
-public record CreateUserCommand : IRequest<long>
+public record CreateUserCommand : IRequest<ValidateableResponse<long>>, IValidateable
 {
     public string Username { get; init; } = default!;
     public string Address { get; init; } = default!;
@@ -17,7 +19,7 @@ public record CreateUserCommand : IRequest<long>
     public string Password { get; init; } = default!;
 }
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ValidateableResponse<long>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -26,8 +28,13 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
         _context = context;
     }
 
-    public async Task<long> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<long>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        var user = await _context.Users
+            .SingleOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+
+        if (user != null) return new ValidateableResponse<long>(0, "Email already registered");
+
         var entity = new User
         {
             Username = request.Username,
@@ -43,6 +50,6 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, long>
         await _context.SaveChangesAsync(cancellationToken);
 
 
-        return entity.Id;
+        return new ValidateableResponse<long>(entity.Id);
     }
 }

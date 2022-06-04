@@ -1,13 +1,14 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using MediatR;
 
 #endregion
 
 namespace Application.Books.Commands.UpdateBook;
 
-public record UpdateBookCommand : IRequest
+public record UpdateBookCommand : IRequest<ValidateableResponse<Unit>>, IValidateable
 {
     public long Id { get; init; } = default!;
     public string Title { get; init; } = default!;
@@ -22,7 +23,7 @@ public record UpdateBookCommand : IRequest
     public int Stock { get; init; } = default!;
 }
 
-public class UpdateBookCommandHandler : AsyncRequestHandler<UpdateBookCommand>
+public class UpdateBookCommandHandler : IRequestHandler<UpdateBookCommand, ValidateableResponse<Unit>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -31,14 +32,14 @@ public class UpdateBookCommandHandler : AsyncRequestHandler<UpdateBookCommand>
         _context = context;
     }
 
-    protected override async Task Handle(UpdateBookCommand request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<Unit>> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Books
             .FindAsync(new object[] { request.Id }, cancellationToken);
 
         if (entity == null)
             // throw new NotFoundException(nameof(TodoItem), request.Id);
-            throw new Exception();
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not exist");
 
         entity.Title = request.Title == "" ? entity.Title : request.Title;
         entity.Edition = request.Edition == "" ? entity.Edition : request.Edition;
@@ -52,5 +53,7 @@ public class UpdateBookCommandHandler : AsyncRequestHandler<UpdateBookCommand>
         entity.Stock = request.Stock == -1 ? entity.Stock : request.Stock;
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new ValidateableResponse<Unit>(Unit.Value);
     }
 }

@@ -4,6 +4,7 @@ using Application.Common.Interfaces;
 using Domain.Entities;
 using Domain.Event;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 #endregion
 
@@ -29,14 +30,25 @@ public class CartProcessedEventHandler : INotificationHandler<CartProcessedEvent
             DateTime = DateTime.Now,
         };
 
-        foreach (var cartItem in notification.Cart.Items)
+        var cart = await _context.Users
+            .Include(u => u.Cart.Items)
+            .Select(u => u.Cart)
+            .Where(c => c.Id == notification.Cart.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (cart == null)
+            throw new Exception("Cart not found");
+
+        foreach (var cartItem in cart.Items)
             entity.Detail.Items.Add(new DetailItem
             {
                 Book = cartItem.Book,
                 Amount = cartItem.Amount,
             });
 
-        notification.Cart.Items.Clear();
+        cart.Items.Clear();
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         await _context.Transactions.AddAsync(entity, cancellationToken);
 

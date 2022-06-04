@@ -8,9 +8,9 @@ using MediatR;
 
 namespace Application.CartItems.Queries;
 
-public record GetCartItemByUserId : IRequest<List<CartItem>>
+public record GetCartItemByUserId : IRequest<List<CartItem>>, IAuthorizeable
 {
-    public long Id { get; set; } = default!;
+    public long UserId { get; set; } = default!;
 }
 
 public class GetCartItemByUserIdQueryHandler : RequestHandler<GetCartItemByUserId, List<CartItem>>
@@ -25,7 +25,7 @@ public class GetCartItemByUserIdQueryHandler : RequestHandler<GetCartItemByUserI
     protected override List<CartItem> Handle(GetCartItemByUserId request)
     {
         return _context.Users
-            .Where(u => u.Id == request.Id)
+            .Where(u => u.Id == request.UserId)
             .SelectMany(u => u.Cart.Items)
             .ToList();
     }

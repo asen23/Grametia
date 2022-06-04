@@ -1,6 +1,7 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 
@@ -8,7 +9,7 @@ using MediatR;
 
 namespace Application.Books.Commands.CreateBook;
 
-public record CreateBookCommand : IRequest<long>
+public record CreateBookCommand : IRequest<ValidateableResponse<long>>, IValidateable
 {
     public string Title { get; init; } = default!;
     public string Edition { get; init; } = default!;
@@ -22,7 +23,7 @@ public record CreateBookCommand : IRequest<long>
     public int Stock { get; init; } = default!;
 }
 
-public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, long>
+public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, ValidateableResponse<long>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -31,7 +32,7 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, long>
         _context = context;
     }
 
-    public async Task<long> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<long>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
         var entity = new Book
         {
@@ -51,6 +52,6 @@ public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, long>
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+        return new ValidateableResponse<long>(entity.Id);
     }
 }

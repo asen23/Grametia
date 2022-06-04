@@ -1,6 +1,7 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CartItems.Commands.AddCartItem;
 
-public record AddCartItemCommand : IRequest
+public record AddCartItemCommand : IRequest<ValidateableResponse<Unit>>, IAuthorizeable, IValidateable
 {
-    public long UserId { get; set; } = default!;
     public long BookId { get; set; } = default!;
     public int Amount { get; set; } = default!;
+    public long UserId { get; set; } = default!;
 }
 
-public class AddCartItemCommandHandler : AsyncRequestHandler<AddCartItemCommand>
+public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, ValidateableResponse<Unit>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -25,20 +26,24 @@ public class AddCartItemCommandHandler : AsyncRequestHandler<AddCartItemCommand>
         _context = context;
     }
 
-    protected override async Task Handle(AddCartItemCommand request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<Unit>> Handle(AddCartItemCommand request,
+        CancellationToken cancellationToken)
     {
         var book = await _context.Books
             .FindAsync(new object[] { request.BookId }, cancellationToken);
+
+        if (book == null)
+            // throw new NotFoundException(nameof(TodoItem), request.Id);
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not exist");
 
         var user = await _context.Users
             .Include(u => u.Cart)
             .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
-        if (book == null || user == null)
+        if (user == null)
             // throw new NotFoundException(nameof(TodoItem), request.Id);
-            throw new Exception();
+            throw new Exception("User does not exist");
 
-        Console.WriteLine(user.Cart.UserId);
         user.Cart.Items.Add(new CartItem
         {
             Book = book,
@@ -46,5 +51,7 @@ public class AddCartItemCommandHandler : AsyncRequestHandler<AddCartItemCommand>
         });
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new ValidateableResponse<Unit>(Unit.Value);
     }
 }

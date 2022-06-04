@@ -1,6 +1,7 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Event;
 using MediatR;
 
@@ -8,14 +9,14 @@ using MediatR;
 
 namespace Application.Cart.Command.ProcessCart;
 
-public record ProcessCartCommand : IRequest
+public record ProcessCartCommand : IRequest<ValidateableResponse<Unit>>, IAuthorizeable, IValidateable
 {
-    public long UserId { get; set; } = default!;
     public string PaymentMethod { get; set; } = default!;
     public string Courier { get; set; } = default!;
+    public long UserId { get; set; } = default!;
 }
 
-public class ProcessCartCommandHandler : AsyncRequestHandler<ProcessCartCommand>
+public class ProcessCartCommandHandler : IRequestHandler<ProcessCartCommand, ValidateableResponse<Unit>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -24,17 +25,20 @@ public class ProcessCartCommandHandler : AsyncRequestHandler<ProcessCartCommand>
         _context = context;
     }
 
-    protected override async Task Handle(ProcessCartCommand request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<Unit>> Handle(ProcessCartCommand request,
+        CancellationToken cancellationToken)
     {
         var entity = await _context.Users
             .FindAsync(new object[] { request.UserId }, cancellationToken);
 
         if (entity == null)
             // throw new NotFoundException(nameof(Book), request.Id);
-            throw new Exception("tester error");
+            throw new Exception("User does not exist");
 
         entity.Cart.AddDomainEvent(new CartProcessedEvent(entity.Cart, request.PaymentMethod, request.Courier));
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new ValidateableResponse<Unit>(Unit.Value);
     }
 }
