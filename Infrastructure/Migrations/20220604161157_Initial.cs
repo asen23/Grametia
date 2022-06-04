@@ -143,18 +143,13 @@ namespace Infrastructure.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Amount = table.Column<int>(type: "INTEGER", nullable: false),
-                    BookId = table.Column<long>(type: "INTEGER", nullable: false),
+                    BookTitle = table.Column<string>(type: "TEXT", nullable: false),
+                    BookPrice = table.Column<long>(type: "INTEGER", nullable: false),
                     DetailId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DetailItem", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DetailItem_Books_BookId",
-                        column: x => x.BookId,
-                        principalTable: "Books",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DetailItem_Detail_DetailId",
                         column: x => x.DetailId,
@@ -186,11 +181,6 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DetailItem_BookId",
-                table: "DetailItem",
-                column: "BookId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DetailItem_DetailId",
                 table: "DetailItem",
                 column: "DetailId");
@@ -210,10 +200,10 @@ namespace Infrastructure.Migrations
                 name: "DetailItem");
 
             migrationBuilder.DropTable(
-                name: "Cart");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "Cart");
 
             migrationBuilder.DropTable(
                 name: "Detail");

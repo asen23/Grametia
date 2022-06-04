@@ -133,15 +133,17 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("BookId")
+                    b.Property<long>("BookPrice")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("BookTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("DetailId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
 
                     b.HasIndex("DetailId");
 
@@ -253,19 +255,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.DetailItem", b =>
                 {
-                    b.HasOne("Domain.Entities.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Detail", "Detail")
                         .WithMany("Items")
                         .HasForeignKey("DetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Book");
 
                     b.Navigation("Detail");
                 });
