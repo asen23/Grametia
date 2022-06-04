@@ -5,9 +5,8 @@ using MediatR;
 
 namespace Application.Books.Queries;
 
-public record GetBookById : IRequest<ValidateableResponse<Book>>
+public record GetBookById(long Id) : IRequest<ValidateableResponse<Book>>
 {
-    public long Id { get; set; } = default!;
 }
 
 public class GetBookByIdQueryHandler : IRequestHandler<GetBookById, ValidateableResponse<Book>>

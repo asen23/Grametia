@@ -5,9 +5,8 @@ using MediatR;
 
 namespace Application.Users.Queries;
 
-public record GetUserById : IRequest<ValidateableResponse<User>>
+public record GetUserById(long Id) : IRequest<ValidateableResponse<User>>
 {
-    public long Id { get; set; } = default!;
 }
 
 public class GetUserByIdQueryHandler : IRequestHandler<GetUserById, ValidateableResponse<User>>
