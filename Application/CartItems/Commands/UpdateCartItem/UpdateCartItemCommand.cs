@@ -2,6 +2,8 @@
 
 using Application.Common.Interfaces;
 using Application.Common.Models;
+using Domain.Entities;
+using Domain.Event;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,10 +46,21 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
             // throw new NotFoundException(nameof(TodoItem), request.Id);
             return new ValidateableResponse<Unit>(Unit.Value, "Cart Item does not exist");
 
+        var change = request.Amount - cartItem.Amount;
+
+        if (cartItem.Book.Stock < change)
+        {
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
+        }
+
+        cartItem.Amount = request.Amount;
+
+        cartItem.AddDomainEvent(new CartItemModifiedEvent(cartItem));
+
+        await _context.SaveChangesAsync(cancellationToken);
+
         if (request.Amount == 0)
             cart.Items.Remove(cartItem);
-        else
-            cartItem.Amount = request.Amount;
 
         await _context.SaveChangesAsync(cancellationToken);
 

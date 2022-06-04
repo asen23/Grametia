@@ -3,6 +3,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain.Entities;
+using Domain.Event;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,9 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
             // throw new NotFoundException(nameof(TodoItem), request.Id);
             return new ValidateableResponse<Unit>(Unit.Value, "Book does not exist");
 
+        if (book.Stock < request.Amount)
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
+
         var user = await _context.Users
             .Include(u => u.Cart)
             .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
@@ -44,11 +48,15 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
             // throw new NotFoundException(nameof(TodoItem), request.Id);
             throw new Exception("User does not exist");
 
-        user.Cart.Items.Add(new CartItem
+        var cartItem = new CartItem
         {
             Book = book,
             Amount = request.Amount,
-        });
+        };
+
+        cartItem.AddDomainEvent(new CartItemModifiedEvent(cartItem));
+
+        user.Cart.Items.Add(cartItem);
 
         await _context.SaveChangesAsync(cancellationToken);
 
