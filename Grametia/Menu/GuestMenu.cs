@@ -85,8 +85,8 @@ public class GuestMenu : IMenu
         }
 
         var id = Input.ReadLong("Id : ");
+        
         var result = await Mediator.Send(new GetBookById(id));
-
         if (!result.IsValidResponse)
         {
             Input.WriteLine(result.ErrorMessage);
@@ -97,6 +97,7 @@ public class GuestMenu : IMenu
         var book = result.Result;
         Input.Clear();
         Input.WriteHeader(book.Title);
+        
         Input.WriteLine($"Id            : {book.Id}");
         Input.WriteLine($"Edition       : {book.Edition}");
         Input.WriteLine($"ISBN          : {book.ISBN}");
@@ -106,7 +107,9 @@ public class GuestMenu : IMenu
         Input.WriteLine($"ReleaseDate   : {book.ReleaseDate}");
         Input.WriteLine($"Price         : {book.Price}");
         Input.WriteLine($"Stock         : {book.Stock}");
+        
         Input.WriteHeader("Description");
+        
         var words = book.Description.Split(' ');
         var lines = words.Skip(1).Aggregate(words.Take(1).ToList(), (l, w) =>
         {
@@ -116,6 +119,7 @@ public class GuestMenu : IMenu
                 l[^1] += " " + w;
             return l;
         });
+        
         Input.WriteLine(string.Join('\n', lines));
         Input.Prompt();
     }
@@ -158,8 +162,8 @@ public class GuestMenu : IMenu
         }
 
         var id = Input.ReadLong("Id : ");
+        
         var result = await Mediator.Send(new GetTransactionById(id));
-
         if (!result.IsValidResponse)
         {
             Input.WriteLine(result.ErrorMessage);

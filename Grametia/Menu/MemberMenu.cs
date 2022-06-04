@@ -84,12 +84,12 @@ public class MemberMenu : GuestMenu
 
             var id = Input.ReadLong("BookId : ");
             var amount = Input.ReadInt("Amount : ");
+            
             var result = await Mediator.Send(new AddCartItemCommand
             {
                 BookId = id,
                 Amount = amount,
             });
-
             if (result.IsValidResponse)
             {
                 Input.WriteLine("Successfully added book to cart");
@@ -152,7 +152,6 @@ public class MemberMenu : GuestMenu
                 BookId = id,
                 Amount = amount,
             });
-
             if (result.IsValidResponse)
             {
                 Input.WriteLine("Successfully updated cart");
@@ -185,7 +184,6 @@ public class MemberMenu : GuestMenu
                 Courier = courier,
                 PaymentMethod = paymentMethod,
             });
-
             if (result.IsValidResponse)
             {
                 Input.WriteLine("Successfully processed your cart");

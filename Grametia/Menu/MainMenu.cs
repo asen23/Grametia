@@ -51,8 +51,10 @@ public class MainMenu : IMenu
         {
             Input.Clear();
             Input.WriteHeader("Login");
+            
             var email = Input.ReadLine("Email : ");
             var password = Input.ReadPassword("Password : ");
+            
             var result = await _mediator.Send(new LoginCommand
             {
                 Email = email,
@@ -83,8 +85,10 @@ public class MainMenu : IMenu
         {
             Input.Clear();
             Input.WriteHeader("Register");
+            
             var username = Input.ReadLine("Username : ");
             var email = Input.ReadLine("Email : ");
+            
             string password;
             while (true)
             {
@@ -101,6 +105,7 @@ public class MainMenu : IMenu
 
             var address = Input.ReadLine("Address : ");
             var phoneNumber = Input.ReadLine("Phone Number : ");
+            
             var result = await _mediator.Send(new CreateUserCommand
             {
                 Username = username,
