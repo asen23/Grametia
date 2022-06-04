@@ -215,7 +215,20 @@ public class AdminMenu : GuestMenu
             Input.WriteHeader("Add User");
             var username = Input.ReadLine("Username : ");
             var email = Input.ReadLine("Email : ");
-            var password = Input.ReadLine("Password : ");
+            string password;
+            while (true)
+            {
+                password = Input.ReadPassword("Password : ");
+                var confirmPassword = Input.ReadPassword("Confirm Password : ");
+                if (password != confirmPassword)
+                {
+                    Input.WriteLine("Password does not match");
+                    continue;
+                }
+
+                break;
+            }
+
             var address = Input.ReadLine("Address : ");
             var phoneNumber = Input.ReadLine("Phone Number : ");
             var role = Input.ReadLine("Role (member or admin) : ");
@@ -236,7 +249,7 @@ public class AdminMenu : GuestMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }
@@ -324,7 +337,7 @@ public class AdminMenu : GuestMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }

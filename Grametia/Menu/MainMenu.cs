@@ -52,7 +52,7 @@ public class MainMenu : IMenu
             Input.Clear();
             Input.WriteHeader("Login");
             var email = Input.ReadLine("Email : ");
-            var password = Input.ReadLine("Password : ");
+            var password = Input.ReadPassword("Password : ");
             var result = await _mediator.Send(new LoginCommand
             {
                 Email = email,
@@ -61,7 +61,7 @@ public class MainMenu : IMenu
             if (!result.IsValidResponse)
             {
                 Input.WriteLine(result.ErrorMessage);
-                if(Input.TryAgain()) continue;
+                if (Input.TryAgain()) continue;
                 Input.Prompt();
                 return;
             }
@@ -85,7 +85,20 @@ public class MainMenu : IMenu
             Input.WriteHeader("Register");
             var username = Input.ReadLine("Username : ");
             var email = Input.ReadLine("Email : ");
-            var password = Input.ReadLine("Password : ");
+            string password;
+            while (true)
+            {
+                password = Input.ReadPassword("Password : ");
+                var confirmPassword = Input.ReadPassword("Confirm Password : ");
+                if (password != confirmPassword)
+                {
+                    Input.WriteLine("Password does not match");
+                    continue;
+                }
+
+                break;
+            }
+
             var address = Input.ReadLine("Address : ");
             var phoneNumber = Input.ReadLine("Phone Number : ");
             var result = await _mediator.Send(new CreateUserCommand
@@ -105,7 +118,7 @@ public class MainMenu : IMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }

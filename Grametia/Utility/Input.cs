@@ -34,6 +34,29 @@ public static class Input
         return Console.ReadLine() ?? "";
     }
 
+    public static string ReadPassword(string prompt)
+    {
+        Console.Write(prompt);
+        var password = "";
+        while (true)
+        {
+            var key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.Enter) break;
+            if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+            {
+                Console.Write("\b \b");
+                password = password.Remove(password.Length - 1);
+                continue;
+            }
+
+            Console.Write("*");
+            password += key.KeyChar;
+        }
+
+        WriteLine();
+        return password;
+    }
+
     public static bool TryAgain()
     {
         Console.Write("Try again? (y/n) : ");
