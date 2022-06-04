@@ -26,5 +26,9 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             .WithMessage("Phone number should only include numbers, dash and plus sign");
         RuleFor(v => v.Address)
             .NotEmpty();
+        RuleFor(v => v.Role)
+            .NotEmpty()
+            .Must(r => r is "admin" or "member")
+            .WithMessage("Role can only be filled with admin or member");
     }
 }

@@ -17,6 +17,7 @@ public record CreateUserCommand : IRequest<ValidateableResponse<long>>, IValidat
     public string PhoneNumber { get; init; } = default!;
     public string Email { get; init; } = default!;
     public string Password { get; init; } = default!;
+    public string Role { get; init; } = default!;
 }
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ValidateableResponse<long>>
@@ -42,7 +43,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Valid
             Email = request.Email,
             Password = request.Password,
             PhoneNumber = request.PhoneNumber,
-            Role = "member",
+            Role = request.Role,
         };
 
         await _context.Users.AddAsync(entity, cancellationToken);
