@@ -7,7 +7,7 @@ public class Detail : BaseEntity
         Items = new List<DetailItem>();
     }
 
-    public List<DetailItem> Items { get; set; } = default!;
+    public List<DetailItem> Items { get; set; }
 
     public long TransactionId { get; set; } = default!;
     public Transaction Transaction { get; set; } = default!;
