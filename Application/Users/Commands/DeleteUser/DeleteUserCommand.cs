@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Users.Commands.DeleteUser;
 
-public record DeleteUserCommand(int Id) : IRequest<ValidateableResponse<Unit>>;
+public record DeleteUserCommand(long Id) : IRequest<ValidateableResponse<Unit>>;
 
 public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, ValidateableResponse<Unit>>
 {

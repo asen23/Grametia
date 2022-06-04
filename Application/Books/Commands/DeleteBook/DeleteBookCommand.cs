@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Books.Commands.DeleteBook;
 
-public record DeleteBookCommand(int Id) : IRequest<ValidateableResponse<Unit>>, IValidateable;
+public record DeleteBookCommand(long Id) : IRequest<ValidateableResponse<Unit>>, IValidateable;
 
 public class DeleteBookCommandHandler : IRequestHandler<DeleteBookCommand, ValidateableResponse<Unit>>
 {
