@@ -30,7 +30,6 @@ public class GetTransactionByIdQueryHandler : IRequestHandler<GetTransactionById
         var transaction = await _context.Transactions
             .Include(t => t.User)
             .Include(t => t.Detail.Items)
-            .ThenInclude(di => di.Book)
             .SingleOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
         if (transaction == null)

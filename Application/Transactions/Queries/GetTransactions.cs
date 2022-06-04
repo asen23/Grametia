@@ -26,7 +26,6 @@ public class GetTransactionsQueryHandler : RequestHandler<GetTransactions, List<
     {
         return _context.Transactions
             .Include(t => t.Detail.Items)
-            .ThenInclude(di => di.Book)
             .Include(t => t.User)
             .ToList();
     }

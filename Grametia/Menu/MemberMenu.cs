@@ -116,12 +116,12 @@ public class MemberMenu : GuestMenu
     private async Task<bool> PrintCartItems()
     {
         var cartItems = await Mediator.Send(new GetCartItemByUserId());
-        var header = $"| {"Id",-5} | {"Title",-50} | {"Price",-20} | {"Amount",20} |";
+        var header = $"| {"BookId",-5} | {"Title",-50} | {"Price",-20} | {"Amount",20} |";
         Input.WriteSeparator(header.Length);
         Input.WriteLine(header);
         Input.WriteSeparator(header.Length);
         foreach (var cartItem in cartItems)
-            Input.WriteLine($"| {cartItem.Id,-5} | {cartItem.Book.Title,-50} | {cartItem.Book.Price,-20} | {cartItem.Amount,20} |");
+            Input.WriteLine($"| {cartItem.Book.Id,-5} | {cartItem.Book.Title,-50} | {cartItem.Book.Price,-20} | {cartItem.Amount,20} |");
         Input.WriteSeparator(header.Length);
         return cartItems.Any();
     }

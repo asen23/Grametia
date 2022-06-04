@@ -367,7 +367,7 @@ public class AdminMenu : GuestMenu
         Input.WriteSeparator(header.Length);
         foreach (var transaction in transactions)
             Input.WriteLine(
-                $"| {transaction.Id,-5} | {transaction.User.Username,-20} | {transaction.DateTime,-20} | {transaction.Detail.Items.Select(di => di.Amount * di.Book.Price).Sum(),20} |");
+                $"| {transaction.Id,-5} | {transaction.User.Username,-20} | {transaction.DateTime,-20} | {transaction.Detail.Items.Select(di => di.Amount * di.BookPrice).Sum(),20} |");
         Input.WriteSeparator(header.Length);
 
         return transactions.Any();

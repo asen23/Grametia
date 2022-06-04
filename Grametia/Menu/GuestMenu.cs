@@ -133,7 +133,7 @@ public class GuestMenu : IMenu
         Input.WriteSeparator(header.Length);
         foreach (var transaction in transactions)
             Input.WriteLine(
-                $"| {transaction.Id,-5} | {transaction.User.Username,-20} | {transaction.DateTime,-20} | {transaction.Detail.Items.Select(di => di.Amount * di.Book.Price).Sum(),20} |");
+                $"| {transaction.Id,-5} | {transaction.User.Username,-20} | {transaction.DateTime,-20} | {transaction.Detail.Items.Select(di => di.Amount * di.BookPrice).Sum(),20} |");
         Input.WriteSeparator(header.Length);
 
         return transactions.Any();
@@ -177,10 +177,10 @@ public class GuestMenu : IMenu
         Input.WriteLine($"Id            : {transaction.Id}");
         Input.WriteLine($"Username      : {transaction.User.Username}");
         Input.WriteLine($"Date          : {transaction.DateTime}");
-        Input.WriteLine($"Total         : {transaction.Detail.Items.Select(di => di.Amount * di.Book.Price).Sum()}");
+        Input.WriteLine($"Total         : {transaction.Detail.Items.Select(di => di.Amount * di.BookPrice).Sum()}");
         Input.WriteHeader("Detail");
         foreach (var (detailItem, i) in transaction.Detail.Items.Select((i, idx) => (i, idx)))
-            Input.WriteLine($"{i + 1}. {detailItem.Book.Title} x{detailItem.Amount}, {detailItem.Book.Price} each");
+            Input.WriteLine($"{i + 1}. {detailItem.BookTitle} x{detailItem.Amount}, {detailItem.BookPrice} each");
         Input.Prompt();
     }
 }

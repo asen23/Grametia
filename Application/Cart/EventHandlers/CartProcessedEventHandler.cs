@@ -32,6 +32,7 @@ public class CartProcessedEventHandler : INotificationHandler<CartProcessedEvent
 
         var cart = await _context.Users
             .Include(u => u.Cart.Items)
+            .ThenInclude(ci => ci.Book)
             .Select(u => u.Cart)
             .Where(c => c.Id == notification.Cart.Id)
             .SingleOrDefaultAsync(cancellationToken);
@@ -42,7 +43,8 @@ public class CartProcessedEventHandler : INotificationHandler<CartProcessedEvent
         foreach (var cartItem in cart.Items)
             entity.Detail.Items.Add(new DetailItem
             {
-                Book = cartItem.Book,
+                BookTitle = cartItem.Book.Title,
+                BookPrice = cartItem.Book.Price,
                 Amount = cartItem.Amount,
             });
 
