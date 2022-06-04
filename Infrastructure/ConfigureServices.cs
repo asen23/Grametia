@@ -1,6 +1,7 @@
 ﻿#region
 
 using Application.Common.Interfaces;
+using Infrastructure.Identity;
 using Infrastructure.Persistence;
 
 #endregion
@@ -15,6 +16,7 @@ public static class ConfigureServices
         services.AddDbContext<ApplicationDbContext>();
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IUserManager, UserManager>();
 
         return services;
     }
