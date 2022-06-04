@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 
 #endregion
 
-Console.WriteLine("Hello, World!");
 var app = Host.CreateDefaultBuilder()
     .ConfigureServices((_, services) =>
         services
@@ -29,7 +28,7 @@ static async void RunApp(IServiceProvider services)
 
     var db = provider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
-    
+
     Seed.Initialize(provider.GetRequiredService<IApplicationDbContext>(), CancellationToken.None);
 
     var mediator = provider.GetRequiredService<ISender>();
