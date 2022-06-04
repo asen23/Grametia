@@ -33,5 +33,12 @@ static async void RunApp(IServiceProvider services)
 
     var mediator = provider.GetRequiredService<ISender>();
 
-    await new MainMenu(mediator).Run();
+    try
+    {
+        await new MainMenu(mediator).Run();
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 }
