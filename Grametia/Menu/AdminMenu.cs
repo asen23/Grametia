@@ -14,7 +14,7 @@ using MediatR;
 
 namespace Grametia.Menu;
 
-public class AdminMenu : GuestMenu
+public class AdminMenu : MemberMenu
 {
     public AdminMenu(ISender mediator) : base(mediator)
     {
@@ -87,7 +87,7 @@ public class AdminMenu : GuestMenu
         {
             Input.Clear();
             Input.WriteHeader("Add Book");
-            
+
             var title = Input.ReadLine("Title : ");
             var edition = Input.ReadLine("Edition : ");
             var description = Input.ReadLine("Description : ");
@@ -98,7 +98,7 @@ public class AdminMenu : GuestMenu
             var releaseDate = Input.ReadLine("Release Date : ");
             var price = Input.ReadLong("Price : ");
             var stock = Input.ReadInt("Stock : ");
-            
+
             var result = await Mediator.Send(new CreateBookCommand
             {
                 Title = title,
@@ -112,7 +112,7 @@ public class AdminMenu : GuestMenu
                 Price = price,
                 Stock = stock,
             });
-            
+
             if (result.IsValidResponse)
             {
                 Input.WriteLine("Successfully added book");
@@ -141,7 +141,7 @@ public class AdminMenu : GuestMenu
             }
 
             var id = Input.ReadLong("Id : ");
-            
+
             Input.WriteLine("Press enter to keep existing value");
             var title = Input.ReadLine("Title : ");
             var edition = Input.ReadLine("Edition : ");
@@ -151,11 +151,11 @@ public class AdminMenu : GuestMenu
             var isbn = Input.ReadLine("ISBN : ");
             var category = Input.ReadLine("Category : ");
             var releaseDate = Input.ReadLine("Release Date : ");
-            
+
             Input.WriteLine("Input -1 to keep existing value");
             var price = Input.ReadLong("Price : ");
             var stock = Input.ReadInt("Stock : ");
-            
+
             var result = await Mediator.Send(new UpdateBookCommand
             {
                 Id = id,
@@ -189,7 +189,7 @@ public class AdminMenu : GuestMenu
         {
             Input.Clear();
             Input.WriteHeader("Delete Book");
-            
+
             var booksNotEmpty = await PrintBooks();
             if (!booksNotEmpty)
             {
@@ -200,9 +200,9 @@ public class AdminMenu : GuestMenu
 
             Input.WriteLine("Input -1 to cancel");
             var id = Input.ReadLong("Id : ");
-            
+
             if (id == -1) return;
-            
+
             var result = await Mediator.Send(new DeleteBookCommand(id));
             if (result.IsValidResponse)
             {
@@ -222,10 +222,10 @@ public class AdminMenu : GuestMenu
         {
             Input.Clear();
             Input.WriteHeader("Add User");
-            
+
             var username = Input.ReadLine("Username : ");
             var email = Input.ReadLine("Email : ");
-            
+
             string password;
             while (true)
             {
@@ -243,7 +243,7 @@ public class AdminMenu : GuestMenu
             var address = Input.ReadLine("Address : ");
             var phoneNumber = Input.ReadLine("Phone Number : ");
             var role = Input.ReadLine("Role (member or admin) : ");
-            
+
             var result = await Mediator.Send(new CreateUserCommand
             {
                 Username = username,
@@ -303,7 +303,7 @@ public class AdminMenu : GuestMenu
         }
 
         var id = Input.ReadLong("Id : ");
-        
+
         var result = await Mediator.Send(new GetUserById(id));
         if (!result.IsValidResponse)
         {
@@ -329,7 +329,7 @@ public class AdminMenu : GuestMenu
         {
             Input.Clear();
             Input.WriteHeader("Delete User");
-                
+
             var usersNotEmpty = await PrintUsers();
             if (!usersNotEmpty)
             {
@@ -340,9 +340,9 @@ public class AdminMenu : GuestMenu
 
             Input.WriteLine("Input -1 to cancel");
             var id = Input.ReadLong("Id : ");
-            
+
             if (id == -1) return;
-            
+
             var result = await Mediator.Send(new DeleteUserCommand(id));
             if (result.IsValidResponse)
             {

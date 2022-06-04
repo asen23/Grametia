@@ -4,8 +4,8 @@ using Application.Cart.Command.ProcessCart;
 using Application.CartItems.Commands.AddCartItem;
 using Application.CartItems.Commands.UpdateCartItem;
 using Application.CartItems.Queries;
+using Application.Transactions.Queries;
 using Application.Users.Commands.LogoutCommand;
-using Domain.Entities;
 using MediatR;
 
 #endregion
@@ -84,7 +84,7 @@ public class MemberMenu : GuestMenu
 
             var id = Input.ReadLong("BookId : ");
             var amount = Input.ReadInt("Amount : ");
-            
+
             var result = await Mediator.Send(new AddCartItemCommand
             {
                 BookId = id,
@@ -98,12 +98,12 @@ public class MemberMenu : GuestMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }
     }
-    
+
     private async Task ViewCartItems()
     {
         Input.Clear();
@@ -121,11 +121,12 @@ public class MemberMenu : GuestMenu
         Input.WriteLine(header);
         Input.WriteSeparator(header.Length);
         foreach (var cartItem in cartItems)
-            Input.WriteLine($"| {cartItem.Book.Id,-5} | {cartItem.Book.Title,-50} | {cartItem.Book.Price,-20} | {cartItem.Amount,20} |");
+            Input.WriteLine(
+                $"| {cartItem.Book.Id,-5} | {cartItem.Book.Title,-50} | {cartItem.Book.Price,-20} | {cartItem.Amount,20} |");
         Input.WriteSeparator(header.Length);
         return cartItems.Any();
     }
-    
+
     private async Task UpdateCart()
     {
         while (true)
@@ -146,7 +147,7 @@ public class MemberMenu : GuestMenu
             var amount = Input.ReadInt("Amount : ");
 
             if (amount == -1) return;
-            
+
             var result = await Mediator.Send(new UpdateCartItemCommand
             {
                 BookId = id,
@@ -160,7 +161,7 @@ public class MemberMenu : GuestMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }
@@ -174,11 +175,11 @@ public class MemberMenu : GuestMenu
             Input.WriteHeader("Process Cart");
 
             var confirm = Input.ReadLine("Are you sure? (y/n) : ");
-            if(confirm != "y") return;
+            if (confirm != "y") return;
 
             var courier = Input.ReadLine("Courier : ");
             var paymentMethod = Input.ReadLine("Payment Method : ");
-            
+
             var result = await Mediator.Send(new ProcessCartCommand
             {
                 Courier = courier,
@@ -192,9 +193,69 @@ public class MemberMenu : GuestMenu
             }
 
             Input.WriteLine(result.ErrorMessage);
-            if(Input.TryAgain()) continue;
+            if (Input.TryAgain()) continue;
             Input.Prompt();
             return;
         }
+    }
+
+    protected virtual async Task<bool> PrintTransactions()
+    {
+        var transactions = await Mediator.Send(new GetTransactionsByUserId());
+        var header = $"| {"Id",-5} | {"Username",-20} | {"Date",-20} | {"Total",20} |";
+        Input.WriteSeparator(header.Length);
+        Input.WriteLine(header);
+        Input.WriteSeparator(header.Length);
+        foreach (var transaction in transactions)
+            Input.WriteLine(
+                $"| {transaction.Id,-5} | {transaction.User.Username,-20} | {transaction.DateTime,-20} | {transaction.Detail.Items.Select(di => di.Amount * di.BookPrice).Sum(),20} |");
+        Input.WriteSeparator(header.Length);
+
+        return transactions.Any();
+    }
+
+    protected async Task ViewTransactions()
+    {
+        Input.Clear();
+        Input.WriteHeader("Transaction List");
+        await PrintTransactions();
+        Input.WriteLine();
+        Input.Prompt();
+    }
+
+    protected async Task ViewTransactionDetail()
+    {
+        Input.Clear();
+        Input.WriteHeader("Transaction Detail");
+
+        var booksNotEmpty = await PrintTransactions();
+        if (!booksNotEmpty)
+        {
+            Input.WriteLine("No books exist");
+            Input.Prompt();
+            return;
+        }
+
+        var id = Input.ReadLong("Id : ");
+
+        var result = await Mediator.Send(new GetTransactionById(id));
+        if (!result.IsValidResponse)
+        {
+            Input.WriteLine(result.ErrorMessage);
+            Input.Prompt();
+            return;
+        }
+
+        var transaction = result.Result;
+        Input.Clear();
+        Input.WriteHeader("Transaction");
+        Input.WriteLine($"Id            : {transaction.Id}");
+        Input.WriteLine($"Username      : {transaction.User.Username}");
+        Input.WriteLine($"Date          : {transaction.DateTime}");
+        Input.WriteLine($"Total         : {transaction.Detail.Items.Select(di => di.Amount * di.BookPrice).Sum()}");
+        Input.WriteHeader("Detail");
+        foreach (var (detailItem, i) in transaction.Detail.Items.Select((i, idx) => (i, idx)))
+            Input.WriteLine($"{i + 1}. {detailItem.BookTitle} x{detailItem.Amount}, {detailItem.BookPrice} each");
+        Input.Prompt();
     }
 }
