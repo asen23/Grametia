@@ -30,16 +30,6 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
     public async Task<ValidateableResponse<Unit>> Handle(AddCartItemCommand request,
         CancellationToken cancellationToken)
     {
-        var book = await _context.Books
-            .FindAsync(new object[] { request.BookId }, cancellationToken);
-
-        if (book == null)
-            // throw new NotFoundException(nameof(TodoItem), request.Id);
-            return new ValidateableResponse<Unit>(Unit.Value, "Book does not exist");
-
-        if (book.Stock < request.Amount)
-            return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
-
         var user = await _context.Users
             .Include(u => u.Cart.Items)
             .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
@@ -53,6 +43,16 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
 
         if (entity != null)
             return new ValidateableResponse<Unit>(Unit.Value, "Book already added to cart");
+        
+        var book = await _context.Books
+            .FindAsync(new object[] { request.BookId }, cancellationToken);
+
+        if (book == null)
+            // throw new NotFoundException(nameof(TodoItem), request.Id);
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not exist");
+
+        if (book.Stock < request.Amount)
+            return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
 
         var cartItem = new CartItem
         {
