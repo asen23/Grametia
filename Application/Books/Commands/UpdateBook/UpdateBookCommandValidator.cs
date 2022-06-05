@@ -11,9 +11,9 @@ public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
     public UpdateBookCommandValidator()
     {
         RuleFor(v => v.Author)
-            .Matches(@"^[a-zA-Z]+$")
+            .Matches(@"^[a-zA-Z ]+$")
             .When(a => a.Author != "")
-            .WithMessage("Author name should only contain alphabet characters");
+            .WithMessage("Author name should only contain alphabet characters and spaces");
         RuleFor(v => v.ISBN)
             .Matches(@"^[0-9\-]+$")
             .When(a => a.ISBN != "")
