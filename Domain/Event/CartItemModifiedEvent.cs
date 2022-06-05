@@ -2,10 +2,12 @@
 
 public class CartItemModifiedEvent : BaseEvent
 {
-    public CartItemModifiedEvent(CartItem cartItem)
+    public CartItemModifiedEvent(int changedAmount, long bookId)
     {
-        CartItem = cartItem;
+        ChangedAmount = changedAmount;
+        BookId = bookId;
     }
 
-    public CartItem CartItem { get; }
+    public int ChangedAmount { get; }
+    public long BookId { get;  }
 }

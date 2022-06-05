@@ -16,12 +16,12 @@ public class CartItemModifiedEventHandler : INotificationHandler<CartItemModifie
     public async Task Handle(CartItemModifiedEvent notification, CancellationToken cancellationToken)
     {
         var book = await _context.Books
-            .FindAsync(new object[] { notification.CartItem.Book.Id }, cancellationToken);
+            .FindAsync(new object[] { notification.BookId }, cancellationToken);
 
         if (book == null)
             throw new Exception("Book does not exist");
 
-        book.Stock -= notification.CartItem.Amount;
+        book.Stock -= notification.ChangedAmount;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

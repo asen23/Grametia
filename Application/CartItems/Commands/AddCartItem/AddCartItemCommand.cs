@@ -41,12 +41,18 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
             return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
 
         var user = await _context.Users
-            .Include(u => u.Cart)
+            .Include(u => u.Cart.Items)
             .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user == null)
             // throw new NotFoundException(nameof(TodoItem), request.Id);
             throw new Exception("User does not exist");
+
+        var entity = user.Cart.Items
+            .SingleOrDefault(ci => ci.Book.Id == request.BookId);
+
+        if (entity != null)
+            return new ValidateableResponse<Unit>(Unit.Value, "Book already added to cart");
 
         var cartItem = new CartItem
         {
@@ -54,7 +60,7 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Val
             Amount = request.Amount,
         };
 
-        cartItem.AddDomainEvent(new CartItemModifiedEvent(cartItem));
+        cartItem.AddDomainEvent(new CartItemModifiedEvent(request.Amount, request.BookId));
 
         user.Cart.Items.Add(cartItem);
 

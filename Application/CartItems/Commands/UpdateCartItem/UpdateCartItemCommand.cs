@@ -53,9 +53,9 @@ public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemComman
             return new ValidateableResponse<Unit>(Unit.Value, "Book does not have enough stock");
         }
 
-        cartItem.Amount = request.Amount;
+        cartItem.AddDomainEvent(new CartItemModifiedEvent(change, request.BookId));
 
-        cartItem.AddDomainEvent(new CartItemModifiedEvent(cartItem));
+        cartItem.Amount = request.Amount;
 
         await _context.SaveChangesAsync(cancellationToken);
 
