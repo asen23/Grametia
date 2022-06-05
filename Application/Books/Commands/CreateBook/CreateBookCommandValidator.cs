@@ -14,8 +14,8 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
             .NotEmpty();
         RuleFor(v => v.Author)
             .NotEmpty()
-            .Matches(@"^[a-zA-Z]+$")
-            .WithMessage("Author name should only contain alphabet characters");
+            .Matches(@"^[a-zA-Z ]+$")
+            .WithMessage("Author name should only contain alphabet characters and spaces");
         RuleFor(v => v.Edition)
             .NotEmpty();
         RuleFor(v => v.Category)
