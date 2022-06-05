@@ -48,6 +48,7 @@ public static class Input
                 password = password.Remove(password.Length - 1);
                 continue;
             }
+            if (char.IsControl(key.KeyChar)) continue;
 
             Console.Write("*");
             password += key.KeyChar;
